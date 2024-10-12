@@ -766,6 +766,7 @@ Transform:
   - {fileID: 1295512050}
   - {fileID: 522397830}
   - {fileID: 1436824084}
+  - {fileID: 684276651}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &445121469
@@ -906,13 +907,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35649ccfcc41f446b93eb2184cdef52e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPlayerId: {fileID: 11400000, guid: 02fee2e92b6fc4d24a848aee7bdc7f61, type: 2}
-  isPlayed: {fileID: 11400000, guid: 9adfbb34ca3c04a878e9bf6a3a072c67, type: 2}
-  touchItemChannel: {fileID: 11400000, guid: 61c1c1b39b25049ad88551fa465a4b21, type: 2}
   playerId: 1
+  touchItemChannel: {fileID: 11400000, guid: 61c1c1b39b25049ad88551fa465a4b21, type: 2}
   checkWinChannel: {fileID: 11400000, guid: e925d287bcbe449c59228352d2f19fce, type: 2}
   resetLevelChannel: {fileID: 11400000, guid: 65c0e8c50fde8451d92f1ce738fc18e6, type: 2}
   checkWinNumberChannel: {fileID: 11400000, guid: c9b360ba3f8ff4259889cdf10abd0baa, type: 2}
+  currentPlayerId: {fileID: 11400000, guid: 02fee2e92b6fc4d24a848aee7bdc7f61, type: 2}
+  isPlayed: {fileID: 11400000, guid: 9adfbb34ca3c04a878e9bf6a3a072c67, type: 2}
   currentMatrixPosition: {fileID: 11400000, guid: 23a0b29c6f4394f54a49c97c65feea96, type: 2}
   currentNumber: {fileID: 11400000, guid: 7531bf0ccd51b4342bf0ebef8a38700e, type: 2}
 --- !u!1 &522397829
@@ -1107,15 +1108,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35649ccfcc41f446b93eb2184cdef52e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPlayerId: {fileID: 11400000, guid: 02fee2e92b6fc4d24a848aee7bdc7f61, type: 2}
-  isPlayed: {fileID: 11400000, guid: 9adfbb34ca3c04a878e9bf6a3a072c67, type: 2}
-  touchItemChannel: {fileID: 11400000, guid: 61c1c1b39b25049ad88551fa465a4b21, type: 2}
   playerId: 0
+  touchItemChannel: {fileID: 11400000, guid: 61c1c1b39b25049ad88551fa465a4b21, type: 2}
   checkWinChannel: {fileID: 11400000, guid: e925d287bcbe449c59228352d2f19fce, type: 2}
   resetLevelChannel: {fileID: 11400000, guid: 65c0e8c50fde8451d92f1ce738fc18e6, type: 2}
   checkWinNumberChannel: {fileID: 11400000, guid: c9b360ba3f8ff4259889cdf10abd0baa, type: 2}
+  currentPlayerId: {fileID: 11400000, guid: 02fee2e92b6fc4d24a848aee7bdc7f61, type: 2}
+  isPlayed: {fileID: 11400000, guid: 9adfbb34ca3c04a878e9bf6a3a072c67, type: 2}
   currentMatrixPosition: {fileID: 11400000, guid: 23a0b29c6f4394f54a49c97c65feea96, type: 2}
   currentNumber: {fileID: 11400000, guid: 7531bf0ccd51b4342bf0ebef8a38700e, type: 2}
+--- !u!1 &684276650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 684276651}
+  - component: {fileID: 684276652}
+  m_Layer: 0
+  m_Name: CellNumberManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &684276651
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684276650}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 381967687}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &684276652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684276650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c28f0f90e45148888fedaf161f23af3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  getCellNumberAroundChannel: {fileID: 11400000, guid: 24bd8ddaaabdb40a282948d93f500516, type: 2}
 --- !u!1 &742982408
 GameObject:
   m_ObjectHideFlags: 0
@@ -1967,15 +2013,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputSystem: {fileID: 11400000, guid: a24a43067be484b3b83529f635d1973d, type: 2}
   touchItemChannel: {fileID: 11400000, guid: 61c1c1b39b25049ad88551fa465a4b21, type: 2}
-  currentMatrixPosition: {fileID: 11400000, guid: 23a0b29c6f4394f54a49c97c65feea96, type: 2}
   endTurnChannel: {fileID: 11400000, guid: 1ad948e1e6b054e5eaad8ff5c7455df1, type: 2}
   resetLevelChannel: {fileID: 11400000, guid: 65c0e8c50fde8451d92f1ce738fc18e6, type: 2}
+  currentMatrixPosition: {fileID: 11400000, guid: 23a0b29c6f4394f54a49c97c65feea96, type: 2}
   currentNumber: {fileID: 11400000, guid: 7531bf0ccd51b4342bf0ebef8a38700e, type: 2}
+  GetCellNumberAroundChannel: {fileID: 11400000, guid: 24bd8ddaaabdb40a282948d93f500516, type: 2}
   matrixNumber: {x: 3, y: 3}
   minPivot: {x: -1.7, y: -1.75}
   maxPivot: {x: 1.7, y: 1.75}
   stepVertical: 1.75
   stepHorizontal: 1.7
+  testCellNumberAround: 0
 --- !u!1 &1780173215
 GameObject:
   m_ObjectHideFlags: 0

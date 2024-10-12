@@ -6,12 +6,18 @@ namespace V_TicTacToe
 {
     public class InputManager : MonoBehaviour
     {
+        [Header("System")]
         [SerializeField] private InputSystem inputSystem;
+
+        [Header("Channel")]
         [SerializeField] private V_Vector3Channel touchItemChannel;
-        [SerializeField] private V_Vector2Storage currentMatrixPosition;
         [SerializeField] private V_VoidChannel endTurnChannel;
         [SerializeField] private V_VoidChannel resetLevelChannel;
+
+        [Header("Storage")]
+        [SerializeField] private V_Vector2Storage currentMatrixPosition;
         [SerializeField] private V_IntegerStorage currentNumber;
+        [SerializeField] private V_ReturnIntegerListChannel GetCellNumberAroundChannel;
 
         [Header("Config")]
         [SerializeField] private Vector2 matrixNumber;
@@ -37,6 +43,7 @@ namespace V_TicTacToe
             resetLevelChannel.RemoveListener(OnResetLevel);
         }
 
+        //Get Item Position From touch Position
         private Vector3? GetItemPosition(Vector3 touchPosition)
         {
             int currentNumber = -1;
@@ -63,7 +70,7 @@ namespace V_TicTacToe
             if (touchPosition.x < minPivot.x)
             {
                 positionX = minPivot.x;
-               
+
             }
             else if (touchPosition.x > maxPivot.x)
             {
@@ -126,7 +133,7 @@ namespace V_TicTacToe
             currentNumber = xIndex + (yIndex * (int)matrixNumber.x);
             this.currentNumber.Value = currentNumber;
 
-            if(HasItem(matrixPosition))
+            if (HasItem(matrixPosition))
             {
                 return null;
             }
@@ -144,15 +151,25 @@ namespace V_TicTacToe
             hasItemPosition.Add(currentMatrixPosition.Value);
         }
 
+        [SerializeField] private int testCellNumberAround;
         private void TouchItem(Vector3 touchPosition)
         {
             Vector3? valueItemPosition = GetItemPosition(touchPosition);
             if (valueItemPosition != null)
             {
-                Vector3 itemPosition = valueItemPosition.Value;
-                touchItemChannel.RunVector3Channel(itemPosition);
-            }
+                List<int> CellNumberAround = GetCellNumberAroundChannel.RunChannel(testCellNumberAround);
 
+                if (CellNumberAround != null && CellNumberAround.Count > 0
+                    && CellNumberAround.Contains(currentNumber.Value))
+                {
+                    Vector3 itemPosition = valueItemPosition.Value;
+                    touchItemChannel.RunVector3Channel(itemPosition);
+                }
+                else
+                {
+                    Debug.LogError($"Out of Can Select Cell");
+                }
+            }
         }
 
         private void OnResetLevel()

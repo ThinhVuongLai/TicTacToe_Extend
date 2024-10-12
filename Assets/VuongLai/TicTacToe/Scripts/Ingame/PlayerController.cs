@@ -7,17 +7,17 @@ namespace V_TicTacToe
 {
     public class PlayerController : MonoBehaviour, IPlayerBehavior
     {
-        [SerializeField] private V_IntegerStorage currentPlayerId;
-        [SerializeField] private V_BooleanStorage isPlayed;
-        [SerializeField] private V_Vector3Channel touchItemChannel;
         [SerializeField] private int playerId;
 
         [Header("Channel")]
+        [SerializeField] private V_Vector3Channel touchItemChannel;
         [SerializeField] private V_Vector2Channel checkWinChannel;
         [SerializeField] private V_VoidChannel resetLevelChannel;
         [SerializeField] private V_IntegerChannel checkWinNumberChannel;
 
         [Header("Storage")]
+        [SerializeField] private V_IntegerStorage currentPlayerId;
+        [SerializeField] private V_BooleanStorage isPlayed;
         [SerializeField] private V_Vector2Storage currentMatrixPosition;
         [SerializeField] private V_IntegerStorage currentNumber;
 
