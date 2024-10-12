@@ -6,12 +6,8 @@ namespace V_TicTacToe
 {
     public class CheckItem : MonoBehaviour, ICheckItemStatus
     {
-        private ISpriteRendererStatus itemRender;
-
-        private void Awake()
-        {
-            itemRender = GetComponent<ISpriteRendererStatus>();
-        }
+        [SerializeField] private CheckItemRender checkItemRender;
+        [SerializeField] private CanSelectRender canSelectRender;
 
         public void Init(Vector3 itemPosition)
         {
@@ -20,13 +16,25 @@ namespace V_TicTacToe
 
         public void SetShowItem(bool showItem)
         {
-            if(showItem)
+            if (showItem)
             {
-                itemRender.Show();
+                checkItemRender.Show();
             }
             else
             {
-                itemRender.Hide();
+                checkItemRender.Hide();
+            }
+        }
+
+        public void SetShowCanSelect(bool showCanSelect)
+        {
+            if (showCanSelect)
+            {
+                canSelectRender.Show();
+            }
+            else
+            {
+                canSelectRender.Hide();
             }
         }
     }
