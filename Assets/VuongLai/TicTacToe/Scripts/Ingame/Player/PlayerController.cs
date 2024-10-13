@@ -8,12 +8,15 @@ namespace V_TicTacToe
     public class PlayerController : MonoBehaviour, IPlayerBehavior
     {
         [SerializeField] private int playerId;
+        [SerializeField] private PlayerInfor playerInfor;
 
         [Header("Channel")]
         [SerializeField] private V_Vector3Channel touchItemChannel;
         [SerializeField] private V_Vector2Channel checkWinChannel;
         [SerializeField] private V_VoidChannel resetLevelChannel;
         [SerializeField] private V_IntegerChannel checkWinNumberChannel;
+        [SerializeField] private V_VoidPlayerInforChannel setPlayerInforChannel;
+        [SerializeField] private V_ReturnPlayerInforChannel getPlayerInforChannel;
 
         [Header("Storage")]
         [SerializeField] private V_IntegerStorage currentPlayerId;
@@ -33,12 +36,16 @@ namespace V_TicTacToe
         {
             touchItemChannel.AddListener(TouchItem);
             resetLevelChannel.AddListener(Reset);
+            getPlayerInforChannel.AddListener(GetPlayerInfor);
+            setPlayerInforChannel.AddListener(SetPlayerInfor);
         }
 
         private void OnDisable()
         {
             touchItemChannel.RemoveListener(TouchItem);
             resetLevelChannel.RemoveListener(Reset);
+            getPlayerInforChannel.RemoveListener(GetPlayerInfor);
+            setPlayerInforChannel.RemoveListener(SetPlayerInfor);
         }
 
         public void PlayerTalk()
@@ -78,6 +85,51 @@ namespace V_TicTacToe
             if (_objectPool != null)
             {
                 _objectPool.ResetPool();
+            }
+        }
+
+        private PlayerInfor GetPlayerInfor()
+        {
+            return playerInfor;
+        }
+
+        private void SetPlayerInfor(PlayerInfor playerInfor)
+        {
+            this.playerInfor = playerInfor;
+        }
+    }
+
+    [System.Serializable]
+    public class PlayerInfor
+    {
+        [SerializeField] private int playerId;
+        [SerializeField] private int currentCellId;
+        [SerializeField] private int armyAmount;
+
+        public int PlayerId
+        {
+            get => playerId;
+            set
+            {
+                playerId = value;
+            }
+        }
+
+        public int CurrentCellId
+        {
+            get => currentCellId;
+            set
+            {
+                currentCellId = value;
+            }
+        }
+
+        public int ArmyAmount
+        {
+            get => armyAmount;
+            set
+            {
+                armyAmount = value;
             }
         }
     }

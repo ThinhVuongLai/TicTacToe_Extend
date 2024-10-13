@@ -767,6 +767,7 @@ Transform:
   - {fileID: 522397830}
   - {fileID: 1436824084}
   - {fileID: 684276651}
+  - {fileID: 1796539860}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &445121469
@@ -908,10 +909,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerId: 1
+  playerInfor:
+    playerId: 1
+    currentCellId: 0
+    armyAmount: 0
   touchItemChannel: {fileID: 11400000, guid: 61c1c1b39b25049ad88551fa465a4b21, type: 2}
   checkWinChannel: {fileID: 11400000, guid: e925d287bcbe449c59228352d2f19fce, type: 2}
   resetLevelChannel: {fileID: 11400000, guid: 65c0e8c50fde8451d92f1ce738fc18e6, type: 2}
   checkWinNumberChannel: {fileID: 11400000, guid: c9b360ba3f8ff4259889cdf10abd0baa, type: 2}
+  setPlayerInforChannel: {fileID: 11400000, guid: 8c216f48ba1844e53aa5a554cea88ab4, type: 2}
+  getPlayerInforChannel: {fileID: 11400000, guid: 4f40fa02752bb4cb5bb7ee01e332c4a2, type: 2}
   currentPlayerId: {fileID: 11400000, guid: 02fee2e92b6fc4d24a848aee7bdc7f61, type: 2}
   isPlayed: {fileID: 11400000, guid: 9adfbb34ca3c04a878e9bf6a3a072c67, type: 2}
   currentMatrixPosition: {fileID: 11400000, guid: 23a0b29c6f4394f54a49c97c65feea96, type: 2}
@@ -1109,10 +1116,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerId: 0
+  playerInfor:
+    playerId: 0
+    currentCellId: 0
+    armyAmount: 0
   touchItemChannel: {fileID: 11400000, guid: 61c1c1b39b25049ad88551fa465a4b21, type: 2}
   checkWinChannel: {fileID: 11400000, guid: e925d287bcbe449c59228352d2f19fce, type: 2}
   resetLevelChannel: {fileID: 11400000, guid: 65c0e8c50fde8451d92f1ce738fc18e6, type: 2}
   checkWinNumberChannel: {fileID: 11400000, guid: c9b360ba3f8ff4259889cdf10abd0baa, type: 2}
+  setPlayerInforChannel: {fileID: 11400000, guid: 90a26cdb787964c48a2004c6d8d261b0, type: 2}
+  getPlayerInforChannel: {fileID: 11400000, guid: 7ba44e3d9f19243e182742f5100922ea, type: 2}
   currentPlayerId: {fileID: 11400000, guid: 02fee2e92b6fc4d24a848aee7bdc7f61, type: 2}
   isPlayed: {fileID: 11400000, guid: 9adfbb34ca3c04a878e9bf6a3a072c67, type: 2}
   currentMatrixPosition: {fileID: 11400000, guid: 23a0b29c6f4394f54a49c97c65feea96, type: 2}
@@ -2093,6 +2106,55 @@ MonoBehaviour:
   updatePlayer1ScoreChannel: {fileID: 11400000, guid: 2e2cd274ca3be4d028f1ab3d2de09535, type: 2}
   currentPlayerId: {fileID: 11400000, guid: 02fee2e92b6fc4d24a848aee7bdc7f61, type: 2}
   isPlayed: {fileID: 11400000, guid: 9adfbb34ca3c04a878e9bf6a3a072c67, type: 2}
+--- !u!1 &1796539859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1796539860}
+  - component: {fileID: 1796539861}
+  m_Layer: 0
+  m_Name: CellManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1796539860
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796539859}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 381967687}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1796539861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796539859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7666f1f5674d84e16bd47ee7982e627c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentPlayerId: {fileID: 11400000, guid: 02fee2e92b6fc4d24a848aee7bdc7f61, type: 2}
+  getPlayer1InforChannel: {fileID: 11400000, guid: 7ba44e3d9f19243e182742f5100922ea, type: 2}
+  getPlayer2InforChannel: {fileID: 11400000, guid: 4f40fa02752bb4cb5bb7ee01e332c4a2, type: 2}
+  setPlayer1InforChannel: {fileID: 11400000, guid: 90a26cdb787964c48a2004c6d8d261b0, type: 2}
+  setPlayer2InforChannel: {fileID: 11400000, guid: 8c216f48ba1844e53aa5a554cea88ab4, type: 2}
 --- !u!1 &1835314496
 GameObject:
   m_ObjectHideFlags: 0
