@@ -70,6 +70,17 @@ namespace TheAiAlchemist
             return null;
         }
 
+        public void ReleaseItem(GameObject itemObject)
+        {
+            foreach (var item in pooledItems)
+            {
+                if(item.Equals(itemObject))
+                {
+                    item.SetActive(false);
+                }
+            }
+        }
+
         public List<GameObject> GetActiveItemList()
         {
             List<GameObject> activeObjects = new List<GameObject>();
