@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 330bc33e330cf4c8cbab16079fd11519, type: 3}
+  m_Name: MatrixConfig
+  m_EditorClassIdentifier: 
+  matrixNumber: {x: 3, y: 3}
+  minPivot: {x: -1.7, y: -1.75}
+  maxPivot: {x: 1.7, y: 1.75}
+  stepVertical: 1.75
+  stepHorizontal: 1.7

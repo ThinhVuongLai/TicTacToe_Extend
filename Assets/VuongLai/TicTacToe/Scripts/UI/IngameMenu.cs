@@ -23,13 +23,16 @@ namespace V_TicTacToe
 
         [Header("Button")]
         [SerializeField] private Button _changePlayerButton;
+        [SerializeField] private Button finishChooseButton;
         [SerializeField] private Button resetButton;
 
         [Header("Channel")]
         [SerializeField] private V_VoidChannel showWinChannel;
         [SerializeField] private V_VoidChannel showDrawChannel;
         [SerializeField] private V_VoidChannel changePlayerChannel;
+        [SerializeField] private V_VoidChannel finishChooseCellChannel;
         [SerializeField] private V_VoidChannel endTurnChannel;
+        [SerializeField] private V_VoidChannel endChooseChannel;
         [SerializeField] private V_VoidChannel showIngameMenuChannel;
         [SerializeField] private V_VoidChannel resetLevelChannel;
         [SerializeField] private V_IntegerChannel updatePlayer1ScoreChannel;
@@ -41,6 +44,7 @@ namespace V_TicTacToe
         private void Awake()
         {
             _changePlayerButton.onClick.AddListener(OnChangePlayer);
+            finishChooseButton.onClick.AddListener(OnFinishChooseCell);
             resetButton.onClick.AddListener(OnClickResetButton);
 
             _changePlayerButton.gameObject.SetActive(false);
@@ -49,6 +53,8 @@ namespace V_TicTacToe
         private void OnEnable()
         {
             endTurnChannel.AddListener(OnEndTurn);
+            endChooseChannel.AddListener(OnEndChoose);
+
             showIngameMenuChannel.AddListener(ShowIngame);
             showWinChannel.AddListener(ShowWin);
             showDrawChannel.AddListener(ShowDraw);
@@ -59,6 +65,8 @@ namespace V_TicTacToe
         private void OnDisable()
         {
             endTurnChannel.RemoveListener(OnEndTurn);
+            endChooseChannel.RemoveListener(OnEndChoose);
+
             showIngameMenuChannel.RemoveListener(ShowIngame);
             showWinChannel.RemoveListener(ShowWin);
             showDrawChannel.RemoveListener(ShowDraw);
@@ -86,6 +94,24 @@ namespace V_TicTacToe
             changePlayerChannel.RunVoidChannel();
         }
 
+        private void OnFinishChooseCell()
+        {
+            if (currentPlayerId.Value.Equals(0))
+            {
+                currentPlayerId.Value = 1;
+            }
+            else if (currentPlayerId.Value.Equals(1))
+            {
+                currentPlayerId.Value = 0;
+            }
+
+            isPlayed.SetValue(false);
+
+            finishChooseButton.gameObject.SetActive(false);
+
+            finishChooseCellChannel.RunVoidChannel();
+        }
+
         private void UpdatePlayerText()
         {
             if (currentPlayerId.Value.Equals(0))
@@ -110,6 +136,11 @@ namespace V_TicTacToe
             _changePlayerButton.gameObject.SetActive(true);
         }
 
+        private void OnEndChoose()
+        {
+            finishChooseButton.gameObject.SetActive(true);
+        }
+
         private void ShowIngame()
         {
             UpdatePlayerText();
@@ -120,6 +151,7 @@ namespace V_TicTacToe
 
             ingameObject.SetActive(true);
             _changePlayerButton.gameObject.SetActive(false);
+            finishChooseButton.gameObject.SetActive(false);
         }
 
         private void ShowWin()

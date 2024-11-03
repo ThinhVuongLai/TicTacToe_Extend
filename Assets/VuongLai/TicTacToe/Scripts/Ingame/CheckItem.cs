@@ -7,7 +7,6 @@ namespace V_TicTacToe
     public class CheckItem : MonoBehaviour, ICheckItemStatus
     {
         [SerializeField] private CheckItemRender checkItemRender;
-        [SerializeField] private CanSelectRender canSelectRender;
 
         public void Init(Vector3 itemPosition)
         {
@@ -23,18 +22,6 @@ namespace V_TicTacToe
             else
             {
                 checkItemRender.Hide();
-            }
-        }
-
-        public void SetShowCanSelect(bool showCanSelect)
-        {
-            if (showCanSelect)
-            {
-                canSelectRender.Show();
-            }
-            else
-            {
-                canSelectRender.Hide();
             }
         }
     }

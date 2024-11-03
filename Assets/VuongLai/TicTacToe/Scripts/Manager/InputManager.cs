@@ -13,18 +13,18 @@ namespace V_TicTacToe
         [SerializeField] private V_Vector3Channel touchItemChannel;
         [SerializeField] private V_VoidChannel endTurnChannel;
         [SerializeField] private V_VoidChannel resetLevelChannel;
+        [SerializeField] private V_ReturnIntegerListChannel GetCellNumberAroundChannel;
 
         [Header("Storage")]
         [SerializeField] private V_Vector2Storage currentMatrixPosition;
         [SerializeField] private V_IntegerStorage currentNumber;
-        [SerializeField] private V_ReturnIntegerListChannel GetCellNumberAroundChannel;
+        [SerializeField] private V_IntegerStorage currentPlayerId;
+        [SerializeField] private V_IntegerStorage player1CellIndex;
+        [SerializeField] private V_IntegerStorage player2CellIndex;
+        [SerializeField] private V_LevelStatusStorage currentLevelStatus;
 
         [Header("Config")]
-        [SerializeField] private Vector2 matrixNumber;
-        [SerializeField] private Vector2 minPivot;
-        [SerializeField] private Vector2 maxPivot;
-        [SerializeField] private float stepVertical;
-        [SerializeField] private float stepHorizontal;
+        [SerializeField] private MatrixConfig matrixConfig;
 
         private List<Vector2> hasItemPosition = new List<Vector2>();
         private Vector2 matrixPosition = Vector2.zero;
@@ -48,11 +48,11 @@ namespace V_TicTacToe
         {
             int currentNumber = -1;
 
-            float halfStepVertical = Mathf.Abs(stepVertical) / 2;
-            float halfStepHorizontal = Mathf.Abs(stepHorizontal) / 2;
+            float halfStepVertical = Mathf.Abs(matrixConfig.StepVertical) / 2;
+            float halfStepHorizontal = Mathf.Abs(matrixConfig.StepHorizontal) / 2;
 
-            if (touchPosition.x < (minPivot.x - halfStepHorizontal) || touchPosition.x > (maxPivot.x + halfStepHorizontal)
-                || touchPosition.y < (minPivot.y - halfStepVertical) || touchPosition.y > (maxPivot.y + halfStepVertical))
+            if (touchPosition.x < (matrixConfig.MinPivot.x - halfStepHorizontal) || touchPosition.x > (matrixConfig.MaxPivot.x + halfStepHorizontal)
+                || touchPosition.y < (matrixConfig.MinPivot.y - halfStepVertical) || touchPosition.y > (matrixConfig.MaxPivot.y + halfStepVertical))
             {
                 matrixPosition = new Vector2(-1, -1);
                 currentMatrixPosition.Value = matrixPosition;
@@ -67,24 +67,24 @@ namespace V_TicTacToe
             float positionX = 0;
             float matrixPositionX = 0;
             int xIndex = 0;
-            if (touchPosition.x < minPivot.x)
+            if (touchPosition.x < matrixConfig.MinPivot.x)
             {
-                positionX = minPivot.x;
+                positionX = matrixConfig.MinPivot.x;
 
             }
-            else if (touchPosition.x > maxPivot.x)
+            else if (touchPosition.x > matrixConfig.MaxPivot.x)
             {
-                positionX = maxPivot.x;
-                matrixPositionX = matrixNumber.x - 1;
+                positionX = matrixConfig.MaxPivot.x;
+                matrixPositionX = matrixConfig.MatrixNumber.x - 1;
 
-                xIndex = (int)(matrixNumber.x - 1);
+                xIndex = (int)(matrixConfig.MatrixNumber.x - 1);
             }
             else
             {
-                float distance = touchPosition.x - minPivot.x;
-                int indexX = (int)(distance / stepHorizontal);
+                float distance = touchPosition.x - matrixConfig.MinPivot.x;
+                int indexX = (int)(distance / matrixConfig.StepHorizontal);
 
-                if (touchPosition.x - ((indexX * stepHorizontal) + minPivot.x) > halfStepHorizontal)
+                if (touchPosition.x - ((indexX * matrixConfig.StepHorizontal) + matrixConfig.MinPivot.x) > halfStepHorizontal)
                 {
                     indexX++;
                 }
@@ -93,50 +93,50 @@ namespace V_TicTacToe
 
                 xIndex = indexX;
 
-                positionX = (indexX * stepHorizontal) + minPivot.x;
+                positionX = (indexX * matrixConfig.StepHorizontal) + matrixConfig.MinPivot.x;
             }
 
             float positionY = 0;
             float matrixPositionY = 0;
             int yIndex = 0;
-            if (touchPosition.y < minPivot.y)
+            if (touchPosition.y < matrixConfig.MinPivot.y)
             {
-                positionY = minPivot.y;
-                matrixPositionY = matrixNumber.y - 1;
+                positionY = matrixConfig.MinPivot.y;
+                matrixPositionY = matrixConfig.MatrixNumber.y - 1;
             }
-            else if (touchPosition.y > maxPivot.y)
+            else if (touchPosition.y > matrixConfig.MaxPivot.y)
             {
-                positionY = maxPivot.y;
+                positionY = matrixConfig.MaxPivot.y;
 
-                yIndex = (int)(matrixNumber.y - 1);
+                yIndex = (int)(matrixConfig.MatrixNumber.y - 1);
             }
             else
             {
-                float distance = touchPosition.y - minPivot.y;
-                int indexY = (int)(distance / stepVertical);
+                float distance = touchPosition.y - matrixConfig.MinPivot.y;
+                int indexY = (int)(distance / matrixConfig.StepVertical);
 
-                if (touchPosition.y - ((indexY * stepVertical) + minPivot.y) > halfStepVertical)
+                if (touchPosition.y - ((indexY * matrixConfig.StepVertical) + matrixConfig.MinPivot.y) > halfStepVertical)
                 {
                     indexY++;
                 }
 
-                matrixPositionY = matrixNumber.y - (indexY) - 1;
+                matrixPositionY = matrixConfig.MatrixNumber.y - (indexY) - 1;
                 yIndex = indexY;
 
-                positionY = (indexY * stepVertical) + minPivot.y;
+                positionY = (indexY * matrixConfig.StepVertical) + matrixConfig.MinPivot.y;
             }
 
             Vector2 itemPosition = new Vector2(positionX, positionY);
             matrixPosition = new Vector2(matrixPositionX, matrixPositionY);
             currentMatrixPosition.Value = matrixPosition;
 
-            currentNumber = xIndex + (yIndex * (int)matrixNumber.x);
+            currentNumber = xIndex + (yIndex * (int)matrixConfig.MatrixNumber.x);
             this.currentNumber.Value = currentNumber;
 
-            if (HasItem(matrixPosition))
-            {
-                return null;
-            }
+            //if (HasItem(matrixPosition))
+            //{
+            //    return null;
+            //}
 
             return itemPosition;
         }
@@ -151,16 +151,39 @@ namespace V_TicTacToe
             hasItemPosition.Add(currentMatrixPosition.Value);
         }
 
-        [SerializeField] private int testCellNumberAround;
         private void TouchItem(Vector3 touchPosition)
         {
             Vector3? valueItemPosition = GetItemPosition(touchPosition);
             if (valueItemPosition != null)
             {
-                List<int> CellNumberAround = GetCellNumberAroundChannel.RunChannel(testCellNumberAround);
+                bool canRunTouchItemChannel = false;
+                if (currentLevelStatus.Value.Equals(LevelStatus.InPlayGame))
+                {
+                    int currentCellIndex = 0;
+                    if (currentPlayerId.Value.Equals(0))
+                    {
+                        currentCellIndex = player1CellIndex.Value;
+                    }
+                    else if (currentPlayerId.Value.Equals(1))
+                    {
+                        currentCellIndex = player2CellIndex.Value;
+                    }
 
-                if (CellNumberAround != null && CellNumberAround.Count > 0
-                    && CellNumberAround.Contains(currentNumber.Value))
+                    List<int> CellNumberAround = GetCellNumberAroundChannel.RunChannel(currentCellIndex);
+
+                    if (CellNumberAround != null && CellNumberAround.Count > 0
+                        && CellNumberAround.Contains(currentNumber.Value))
+                    {
+                        canRunTouchItemChannel = true;
+                    }
+                }
+                else if (currentLevelStatus.Value.Equals(LevelStatus.Player1Choose)
+                    || currentLevelStatus.Value.Equals(LevelStatus.Player2Choose))
+                {
+                    canRunTouchItemChannel = true;
+                }
+
+                if(canRunTouchItemChannel)
                 {
                     Vector3 itemPosition = valueItemPosition.Value;
                     touchItemChannel.RunVector3Channel(itemPosition);

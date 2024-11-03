@@ -8,6 +8,5 @@ namespace V_TicTacToe
     {
         public void Init(Vector3 itemPosition);
         public void SetShowItem(bool showItem);
-        public void SetShowCanSelect(bool showCanSelect);
     }
 }

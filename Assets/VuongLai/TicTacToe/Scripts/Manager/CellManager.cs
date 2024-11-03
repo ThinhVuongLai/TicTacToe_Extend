@@ -8,61 +8,170 @@ namespace V_TicTacToe
     {
         [Header("Storage")]
         [SerializeField] private V_IntegerStorage currentPlayerId;
+        [SerializeField] private V_CellInforListStorage cellInfors;
+        [SerializeField] private V_IntListStorage player1Numbers;
+        [SerializeField] private V_IntListStorage player2Numbers;
 
         [Header("Channel")]
         [SerializeField] private V_ReturnPlayerInforChannel getPlayer1InforChannel;
         [SerializeField] private V_ReturnPlayerInforChannel getPlayer2InforChannel;
         [SerializeField] private V_VoidPlayerInforChannel setPlayer1InforChannel;
         [SerializeField] private V_VoidPlayerInforChannel setPlayer2InforChannel;
+        [SerializeField] private V_ReturnCellPlayerBehaviorChannel occupyCellChannel;
+        [SerializeField] private V_IntegerChannel playerChooseCellChannel;
+        [SerializeField] private V_VoidChannel createRandomArmor;
+        [SerializeField] private V_VoidChannel initCellInforsChannel;
+        [SerializeField] private V_VoidChannel finishCreateArmorChannel;
 
-        private List<CellInfor> cellInfors = new List<CellInfor>();
+        [Header("Config")]
+        [SerializeField] private MatrixConfig matrixConfig;
+
+        private void OnEnable()
+        {
+            occupyCellChannel.AddListener(OccupyCell);
+            playerChooseCellChannel.AddListener(PlayerChooseCell);
+            createRandomArmor.AddListener(CreateRandomArmor);
+            initCellInforsChannel.AddListener(InitCellInfors);
+        }
+
+        private void OnDisable()
+        {
+            occupyCellChannel.RemoveListener(OccupyCell);
+            playerChooseCellChannel.RemoveListener(PlayerChooseCell);
+            createRandomArmor.RemoveListener(CreateRandomArmor);
+            initCellInforsChannel.RemoveListener(InitCellInfors);
+        }
+
+        private void InitCellInfors()
+        {
+            if (cellInfors.Value == null)
+            {
+                cellInfors.Value = new List<CellInfor>();
+            }
+
+            int cellLength = matrixConfig.MatrixNumber.x * matrixConfig.MatrixNumber.y;
+            for (int i = 0; i < cellLength; i++)
+            {
+                cellInfors.Value.Add(new CellInfor() { CellId = i, OccupyPlayerId = -1, ArmyAmount = 0 });
+            }
+        }
+
+        private void ResetCellInfors()
+        {
+            for (int i = 0, max = cellInfors.Value.Count; i < max; i++)
+            {
+                cellInfors.Value[i].OccupyPlayerId = -1;
+                cellInfors.Value[i].ArmyAmount = 0;
+            }
+        }
+
+        private void CreateRandomArmor()
+        {
+            CellInfor currentCellInfor = null;
+            int random;
+
+            for (int i = 0, max = cellInfors.Value.Count; i < max; i++)
+            {
+                currentCellInfor = cellInfors.Value[i];
+                if (currentCellInfor.OccupyPlayerId < 0)
+                {
+                    random = UnityEngine.Random.Range(1, 6);
+                    currentCellInfor.ArmyAmount = random;
+                }
+            }
+
+            finishCreateArmorChannel.RunVoidChannel();
+        }
+
+        private void PlayerChooseCell(int cellId)
+        {
+            PlayerInfor player1Infor = getPlayer1InforChannel.RunChannel();
+            PlayerInfor player2Infor = getPlayer2InforChannel.RunChannel();
+
+            CellInfor currentCellInfor = cellInfors.Value[cellId];
+            if (currentPlayerId.Value.Equals(player1Infor.PlayerId))
+            {
+                player1Infor.ArmyAmount += currentCellInfor.ArmyAmount;
+                player1Infor.CurrentCellId = currentCellInfor.CellId;
+                setPlayer1InforChannel.RunChannel(player1Infor);
+            }
+            else if (currentPlayerId.Value.Equals(player2Infor.PlayerId))
+            {
+                player2Infor.ArmyAmount += currentCellInfor.ArmyAmount;
+                player2Infor.CurrentCellId = currentCellInfor.CellId;
+                setPlayer2InforChannel.RunChannel(player2Infor);
+            }
+
+            currentCellInfor.OccupyPlayerId = currentPlayerId.Value;
+            currentCellInfor.ArmyAmount = 0;
+
+            ChangeCellIdList(cellId);
+        }
+
+        private void ChangeCellIdList(int cellId)
+        {
+            PlayerInfor player1Infor = getPlayer1InforChannel.RunChannel();
+            PlayerInfor player2Infor = getPlayer2InforChannel.RunChannel();
+
+            if (currentPlayerId.Value.Equals(player1Infor.PlayerId))
+            {
+                if (!player1Numbers.Value.Contains(cellId))
+                {
+                    player1Numbers.Value.Add(cellId);
+                }
+
+                if (player2Numbers.Value.Contains(cellId))
+                {
+                    player2Numbers.Value.Remove(cellId);
+                }
+            }
+            else if (currentPlayerId.Value.Equals(player2Infor.PlayerId))
+            {
+                if (player1Numbers.Value.Contains(cellId))
+                {
+                    player1Numbers.Value.Remove(cellId);
+                }
+
+                if (!player2Numbers.Value.Contains(cellId))
+                {
+                    player2Numbers.Value.Add(cellId);
+                }
+            }
+        }
 
         private CellPlayerBehavior OccupyCell(int cellId)
         {
             CellPlayerBehavior cellPlayerBehavior = CellPlayerBehavior.NotOccupy;
 
-            if (cellId < 0 && cellId >= cellInfors.Count)
+            if (cellId < 0 && cellId >= cellInfors.Value.Count)
             {
                 return cellPlayerBehavior;
             }
-            CellInfor currentCellInfor = cellInfors[cellId];
+            CellInfor currentCellInfor = cellInfors.Value[cellId];
 
             PlayerInfor player1Infor = getPlayer1InforChannel.RunChannel();
             PlayerInfor player2Infor = getPlayer2InforChannel.RunChannel();
 
-            if (currentCellInfor.OccupyPlayerId <= 0)
+            if (currentCellInfor.OccupyPlayerId < 0)
             {
                 if (currentCellInfor.ArmyAmount > 0)
                 {
-                    if (currentPlayerId.Equals(player1Infor.PlayerId))
-                    {
-                        player1Infor.ArmyAmount += currentCellInfor.ArmyAmount;
-                        player1Infor.CurrentCellId = currentCellInfor.CellId;
-                        setPlayer1InforChannel.RunChannel(player1Infor);
-                    }
-                    else if (currentPlayerId.Equals(player2Infor.PlayerId))
-                    {
-                        player2Infor.ArmyAmount += currentCellInfor.ArmyAmount;
-                        player2Infor.CurrentCellId = currentCellInfor.CellId;
-                        setPlayer2InforChannel.RunChannel(player2Infor);
-                    }
+                    PlayerChooseCell(cellId);
 
                     cellPlayerBehavior = CellPlayerBehavior.Occupy;
-                    currentCellInfor.OccupyPlayerId = currentPlayerId.Value;
-                    currentCellInfor.ArmyAmount = 0;
                 }
             }
             else
             {
-                if (currentCellInfor.OccupyPlayerId.Equals(currentPlayerId))
+                if (currentCellInfor.OccupyPlayerId.Equals(currentPlayerId.Value))
                 {
-                    if (currentPlayerId.Equals(player1Infor.PlayerId))
+                    if (currentPlayerId.Value.Equals(player1Infor.PlayerId))
                     {
                         player1Infor.ArmyAmount += 1;
                         player1Infor.CurrentCellId = currentCellInfor.CellId;
                         setPlayer1InforChannel.RunChannel(player1Infor);
                     }
-                    else if (currentPlayerId.Equals(player2Infor.PlayerId))
+                    else if (currentPlayerId.Value.Equals(player2Infor.PlayerId))
                     {
                         player2Infor.ArmyAmount += 1;
                         player2Infor.CurrentCellId = currentCellInfor.CellId;
@@ -74,12 +183,12 @@ namespace V_TicTacToe
                 else
                 {
                     PlayerInfor opponentInfor = null;
-                    if (currentPlayerId.Equals(player1Infor.PlayerId)
+                    if (currentPlayerId.Value.Equals(player1Infor.PlayerId)
                         && currentCellInfor.CellId.Equals(player2Infor.CurrentCellId))
                     {
                         opponentInfor = player2Infor;
                     }
-                    else if (currentPlayerId.Equals(player2Infor.PlayerId)
+                    else if (currentPlayerId.Value.Equals(player2Infor.PlayerId)
                         && currentCellInfor.CellId.Equals(player1Infor.CurrentCellId))
                     {
                         opponentInfor = player1Infor;
@@ -88,7 +197,7 @@ namespace V_TicTacToe
                     if (opponentInfor == null)
                     {
                         cellPlayerBehavior = CellPlayerBehavior.Occupy;
-                        if (currentPlayerId.Equals(player1Infor.PlayerId)
+                        if (currentPlayerId.Value.Equals(player1Infor.PlayerId)
                             && player1Infor.ArmyAmount > 0)
                         {
                             player1Infor.ArmyAmount -= 1;
@@ -97,7 +206,7 @@ namespace V_TicTacToe
 
                             currentCellInfor.OccupyPlayerId = player1Infor.PlayerId;
                         }
-                        else if (currentPlayerId.Equals(player2Infor.PlayerId)
+                        else if (currentPlayerId.Value.Equals(player2Infor.PlayerId)
                             && player2Infor.ArmyAmount > 0)
                         {
                             player2Infor.ArmyAmount -= 1;
@@ -113,9 +222,13 @@ namespace V_TicTacToe
                     }
                     else
                     {
-                        if (currentPlayerId.Equals(player1Infor.PlayerId))
+                        int playerArmorAmount;
+                        int opponentArmorAmount = opponentInfor.ArmyAmount;
+                        if (currentPlayerId.Value.Equals(player1Infor.PlayerId))
                         {
-                            player1Infor.ArmyAmount -= opponentInfor.ArmyAmount;
+                            playerArmorAmount = player1Infor.ArmyAmount;
+
+                            player1Infor.ArmyAmount -= opponentArmorAmount;
                             if (player1Infor.ArmyAmount < 0)
                             {
                                 player1Infor.ArmyAmount = 0;
@@ -123,7 +236,7 @@ namespace V_TicTacToe
                             player1Infor.CurrentCellId = currentCellInfor.CellId;
                             setPlayer1InforChannel.RunChannel(player1Infor);
 
-                            opponentInfor.ArmyAmount -= player1Infor.ArmyAmount;
+                            opponentInfor.ArmyAmount -= playerArmorAmount;
                             if (opponentInfor.ArmyAmount < 0)
                             {
                                 opponentInfor.ArmyAmount = 0;
@@ -140,9 +253,11 @@ namespace V_TicTacToe
                                 cellPlayerBehavior = CellPlayerBehavior.Occupy;
                             }
                         }
-                        else if (currentPlayerId.Equals(player2Infor.PlayerId))
+                        else if (currentPlayerId.Value.Equals(player2Infor.PlayerId))
                         {
-                            player2Infor.ArmyAmount -= opponentInfor.ArmyAmount;
+                            playerArmorAmount = player2Infor.ArmyAmount;
+
+                            player2Infor.ArmyAmount -= opponentArmorAmount;
                             if (player2Infor.ArmyAmount < 0)
                             {
                                 player2Infor.ArmyAmount = 0;
@@ -150,7 +265,7 @@ namespace V_TicTacToe
                             player2Infor.CurrentCellId = currentCellInfor.CellId;
                             setPlayer2InforChannel.RunChannel(player2Infor);
 
-                            opponentInfor.ArmyAmount -= player2Infor.ArmyAmount;
+                            opponentInfor.ArmyAmount -= playerArmorAmount;
                             if (opponentInfor.ArmyAmount < 0)
                             {
                                 opponentInfor.ArmyAmount = 0;
@@ -171,12 +286,17 @@ namespace V_TicTacToe
                 }
             }
 
+            if(cellPlayerBehavior.Equals(CellPlayerBehavior.Occupy))
+            {
+                ChangeCellIdList(cellId);
+            }
+
             return cellPlayerBehavior;
         }
     }
 
     [System.Serializable]
-    public class CellInfor : MonoBehaviour
+    public class CellInfor
     {
         [SerializeField] private int cellId;
         [SerializeField] private int occupyPlayerId;//-1 la chua co Player nao chiem duoc cell nay
@@ -212,6 +332,7 @@ namespace V_TicTacToe
 
     public enum CellPlayerBehavior
     {
+        None,
         Occupy,
         BackPlayerCell,
         NotOccupy,
